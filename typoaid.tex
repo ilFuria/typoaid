@@ -1,0 +1,42 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{lmodern}
+\usepackage{dtk-logos}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{url}
+\author{Daniele Ratti}
+\title{The Typo Aid Package (v.0.0.7)}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The typo aid package provides some useful tools in order to provide useful informations regarding the used fonts.
+\end{abstract}
+\section{Commands}
+Four commands are provided:
+\begin{enumerate}
+\item \texttt{typrintalph} prints the alphabet length
+\item \texttt{typrintex} prints the ex-height
+\item\texttt{typrintem} prints the em-width.
+\end{enumerate}
+
+\noindent The commands follow the same schema, regarding the output:
+\begin{itemize}
+\item the normal, unstarred version of the command outputs to the typeset page
+\item the starred version outputs to the terminal
+\item both versions output to the log file, in addition to their normal output.
+\end{itemize}
+All of the commands can accept, as their single arguments, a font switch (e.g. \texttt{\textbackslash itshape, \textbackslash bfseries,\dots}). This will make them print the features of the selected switch.
+\subsection{Compatibility and Remarks}
+The package is compatible with pdf{}\LaTeX, Lua\LaTeX and \XeLaTeX, and will accept a font family switch defined via the \texttt{fontspec} package.
+\section{Acknowledgements}
+I would like to thank: \TeX nician, Christian Hupfer, Enrico Gregorio, Joseph Wright, David Carlisle and Barbara Beeton for their support and kind remarks. Please mark that they know nothing about the code inside the package, but provided many useful tips and tools for me to develop this. They cannot be blamed for anything that can be wrong in this package.
+\section{License and contacts}
+This package is released under the \emph{\LaTeX{} Project Public License,} version 1.3c or later. See \url{http://www.latex-project.org/lppl.txt}.
+
+The package is maintained by \textsc{Daniele Ratti.} 
+
+Email: \texttt{ilfuria+tya at gmail dot com}
+\end{document}

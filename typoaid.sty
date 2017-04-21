@@ -1,0 +1,112 @@
+%% ---------------------------------------------------------------
+%% The typoaid package --- 
+%% Maintained by Daniele Ratti
+%% E-mail: ilfuria+tya@gmail.com
+%% Released under the LaTeX Project Public License v1.3c or later
+%% See http://www.latex-project.org/lppl.txt
+%% ---------------------------------------------------------------
+
+\RequirePackage{expl3}
+\ProvidesExplPackage{typoaid}{2017/04/21}{0.0.7} {Typographical Aid}
+\RequirePackage{xparse}
+
+%%\ExplSyntaxOn
+%%\newlength{\typ@@id}
+
+\dim_new:N \l__typoAid_Alphabet_dim
+
+\dim_new:N\l__typoAid_ExHeight_dim
+
+\dim_new:N\l__typoAid_EmWidth_dim
+
+\box_new:N\l__typoAid_Alphabet_box
+
+\str_const:Nx\l__typoAid_typeout_string{TypoAid\iow_newline: *~Font~switch~given:~}
+
+%% abcdefghijklmnopqrstuvwxyz
+%%{a{}b{}c{}d{}e{}f{}g{}h{}i{}j{}k{}l{}m{}n{}o{}p{}q{}r{}s{}t{}u{}v{}w{}x{}y{}z{}}
+
+\cs_set_nopar:Npn\_typoAid_typoAlphabet:n #1 {%
+       	\box_gclear:N\l__typoAid_Alphabet_box
+	\hbox_set:Nn\l__typoAid_Alphabet_box{#1a{}b{}c{}d{}e{}f{}g{}h{}i{}j{}k{}l{}m{}n{}o{}p{}q{}r{}s{}t{}u{}v{}w{}x{}y{}z{}}}
+
+\cs_set_nopar:Npn\_typoAid_incrCntr:n #1 {%
+	\_typoAid_typoAlphabet:n{#1}	
+	\dim_set:Nn\l__typoAid_Alphabet_dim{\box_wd:N\l__typoAid_Alphabet_box}
+}
+
+\cs_set_nopar:Npn\_typoAid_calcEx:n #1{%
+	\group_begin:
+		#1
+		\dim_gset:Nn\l__typoAid_ExHeight_dim{\dim_eval:n{1ex}}
+	\group_end:
+}
+
+\cs_set_nopar:Npn\_typoAid_calcEm:n#1{
+	\group_begin:
+		#1
+		\dim_gset:Nn\l__typoAid_EmWidth_dim{\dim_eval:n{1em}}
+	\group_end:
+}
+
+\cs_set:Npn\_typoAid_log:n#1#2{%
+	\msg_log:n{%
+	\l__typoAid_typeout_string~#2 \iow_newline:.~#1
+	}
+}
+
+\cs_set_nopar:Nn\_typoAid_Alphabet_string:{Alphabet~length:~\dim_use:N\l__typoAid_Alphabet_dim}
+
+\cs_set_nopar:Nn\_typoAid_ExHeight_string:{%
+	Ex~height:~\dim_use:N\l__typoAid_ExHeight_dim
+}
+
+\cs_set_nopar:Npn\_typoAid_EmWidth_string:{%
+	Em~width:~\dim_use:N\l__typoAid_EmWidth_dim
+}
+
+\ProvideDocumentCommand{\typrintalph}{ s m }%
+	{%
+	\_typoAid_incrCntr:n{#2}
+	\IfBooleanTF{#1}{%
+		\msg_term:n{\l__typoAid_typeout_string#2\iow_newline:*~\_typoAid_Alphabet_string:}%
+	}{%
+		 \_typoAid_Alphabet_string:%
+	}%
+	\_typoAid_log:n{\_typoAid_Alphabet_string:}{ #2}
+}
+
+\ProvideDocumentCommand{\typrintex}{ s m }{%
+	\_typoAid_calcEx:n{#2}
+	\IfBooleanTF{#1}{%
+		\msg_term:n{\l__typoAid_typeout_string#2 \iow_newline:*~ \_typoAid_ExHeight_string:}%
+	}{%
+		 \_typoAid_ExHeight_string:%
+	}%
+	\_typoAid_log:n{\_typoAid_ExHeight_string:}{ #2}
+}
+
+\ProvideDocumentCommand{\typrintem}{s m}{%
+	\_typoAid_calcEm:n{#2}
+	\IfBooleanTF{#1}{%
+		\msg_term:n{\l__typoAid_typeout_string #2 \iow_newline:*~ \_typoAid_EmWidth_string:}%
+	}{%
+		\_typoAid_EmWidth_string:
+	}%
+	\_typoAid_log:n{\_typoAid_EmWidth_string:}{ #2}
+}
+
+\ProvideDocumentCommand{\typrintall}{ s m}{%
+\IfBooleanTF{#1}{%
+	\typrintalph*{#2}\\
+	\typrintex*{#2}\\
+	\typrintem*{#2}\\
+	}{%
+	\typrintalph{#2}\\
+	\typrintex{#2}\\
+	\typrintem{#2}\\
+	}
+}
+
+
+%%\ExplSyntaxOff
