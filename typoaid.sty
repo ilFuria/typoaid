@@ -7,11 +7,12 @@
 %% ---------------------------------------------------------------
 
 \RequirePackage{expl3}
-\ProvidesExplPackage{typoaid}{2017/04/21}{0.0.7} {Typographical Aid}
+\ProvidesExplPackage{typoaid}{2017/04/21}{0.3.0} {Typographical Aid}
 \RequirePackage{xparse}
+\RequirePackage{booktabs}
+\RequirePackage{siunitx}
 
-%%\ExplSyntaxOn
-%%\newlength{\typ@@id}
+%% CONSTANTS AND VARIABLES
 
 \dim_new:N \l__typoAid_Alphabet_dim
 
@@ -19,20 +20,28 @@
 
 \dim_new:N\l__typoAid_EmWidth_dim
 
+\dim_new:N\l__typoAid_MeanChar_dim
+
 \box_new:N\l__typoAid_Alphabet_box
 
-\str_const:Nx\l__typoAid_typeout_string{TypoAid\iow_newline: *~Font~switch~given:~}
+\int_new:N\l__typoAid_CharPerRow_int
 
-%% abcdefghijklmnopqrstuvwxyz
-%%{a{}b{}c{}d{}e{}f{}g{}h{}i{}j{}k{}l{}m{}n{}o{}p{}q{}r{}s{}t{}u{}v{}w{}x{}y{}z{}}
+\str_const:Nn\c__typoAid_name_string{TypoAid}
 
+\str_const:Nx\c__typoAid_typeout_string{TypoAid\iow_newline: *~Font~switch~given:~}
+
+%%END CONSTANTS AND VARIABLES
+
+
+%% CALCULATIONS
 \cs_set_nopar:Npn\_typoAid_typoAlphabet:n #1 {%
        	\box_gclear:N\l__typoAid_Alphabet_box
-	\hbox_set:Nn\l__typoAid_Alphabet_box{#1a{}b{}c{}d{}e{}f{}g{}h{}i{}j{}k{}l{}m{}n{}o{}p{}q{}r{}s{}t{}u{}v{}w{}x{}y{}z{}}}
+	\hbox_gset:Nn\l__typoAid_Alphabet_box{#1a{}b{}c{}d{}e{}f{}g{}h{}i{}j{}k{}l{}m{}n{}o{}p{}q{}r{}s{}t{}u{}v{}w{}x{}y{}z{}}}
 
-\cs_set_nopar:Npn\_typoAid_incrCntr:n #1 {%
+\cs_set_nopar:Npn\_typoAid_calcAlph:n #1 {%
 	\_typoAid_typoAlphabet:n{#1}	
-	\dim_set:Nn\l__typoAid_Alphabet_dim{\box_wd:N\l__typoAid_Alphabet_box}
+	\dim_gset:Nn\l__typoAid_Alphabet_dim{\box_wd:N\l__typoAid_Alphabet_box}
+	\dim_gset:Nn\l__typoAid_MeanChar_dim{\dim_eval:n{\l__typoAid_Alphabet_dim/26}}
 }
 
 \cs_set_nopar:Npn\_typoAid_calcEx:n #1{%
@@ -49,10 +58,37 @@
 	\group_end:
 }
 
+\cs_set_nopar:Npn\_typoAid_calcCharPW:n#1{
+
+\int_gset:Nn\l__typoAid_CharPerRow_int{\int_eval:n{\fp_to_int:n{\dim_ratio:nn{\dim_eval:n{#1}}{\l__typoAid_MeanChar_dim}}}}
+
+}
+
+\cs_set:Npn\_typoAid_calcAll:nn#1#2{%
+\_typoAid_calcAlph:n{#1}
+\_typoAid_calcEx:n{#1}
+\_typoAid_calcEm:n{#1}
+\_typoAid_calcCharPW:n{#2}
+}
+
+\cs_set:Npn\_typoAid_calcAll:n#1{%
+\_typoAid_calcAll:nn{#1}{\dim_eval:n{\columnwidth}}
+}
+%% END CALCULATIONS
+
+%% LOGS AND STRINGS
 \cs_set:Npn\_typoAid_log:n#1#2{%
 	\msg_log:n{%
-	\l__typoAid_typeout_string~#2 \iow_newline:.~#1
+	\c__typoAid_typeout_string~#2 \iow_newline:.~#1
 	}
+}
+
+\cs_set:Npn\_typoAid_column_string:n#1{%
+\_typoAid_calcCharPW:n{\dim_eval:n{\columnwidth}}
+Current~column~width:~\dim_use:N\columnwidth.~
+Yields~\int_eval:n{\l__typoAid_CharPerRow_int}~
+~characters~per~line,~with~the~selected~switch:~\cs_to_str:N#1\ 
+
 }
 
 \cs_set_nopar:Nn\_typoAid_Alphabet_string:{Alphabet~length:~\dim_use:N\l__typoAid_Alphabet_dim}
@@ -65,11 +101,15 @@
 	Em~width:~\dim_use:N\l__typoAid_EmWidth_dim
 }
 
+%% END LOGS AND STRINGS
+
+%% PUBLIC
+
 \ProvideDocumentCommand{\typrintalph}{ s m }%
 	{%
-	\_typoAid_incrCntr:n{#2}
+	\_typoAid_calcAlph:n{#2}
 	\IfBooleanTF{#1}{%
-		\msg_term:n{\l__typoAid_typeout_string#2\iow_newline:*~\_typoAid_Alphabet_string:}%
+		\msg_term:n{\l__typoAid_typeout_string\exp_not:N#2~\iow_newline:*~\_typoAid_Alphabet_string:}%
 	}{%
 		 \_typoAid_Alphabet_string:%
 	}%
@@ -79,7 +119,7 @@
 \ProvideDocumentCommand{\typrintex}{ s m }{%
 	\_typoAid_calcEx:n{#2}
 	\IfBooleanTF{#1}{%
-		\msg_term:n{\l__typoAid_typeout_string#2 \iow_newline:*~ \_typoAid_ExHeight_string:}%
+		\msg_term:n{\c__typoAid_typeout_string\exp_not:N#2~ \iow_newline:*~ \_typoAid_ExHeight_string:}%
 	}{%
 		 \_typoAid_ExHeight_string:%
 	}%
@@ -89,7 +129,7 @@
 \ProvideDocumentCommand{\typrintem}{s m}{%
 	\_typoAid_calcEm:n{#2}
 	\IfBooleanTF{#1}{%
-		\msg_term:n{\l__typoAid_typeout_string #2 \iow_newline:*~ \_typoAid_EmWidth_string:}%
+		\msg_term:n{\c__typoAid_typeout_string\exp_not:N#2~ \iow_newline:*~ \_typoAid_EmWidth_string:}%
 	}{%
 		\_typoAid_EmWidth_string:
 	}%
@@ -108,5 +148,57 @@
 	}
 }
 
+\ProvideDocumentCommand{\typrintcolumn}{s m}{%
+	\_typoAid_calcAlph:n{#2}
+	\IfBooleanTF{#1}{%
+		\msg_term:n{\c__typoAid_name_string\iow_newline:* ~\_typoAid_column_string:n{#2}}
+	}{%
+		\_typoAid_column_string:n{#2}
+	}
+	
+	\msg_log:n{\c__typoAid_name_string\iow_newline:.~\_typoAid_column_string:n{#2}}
+}
 
+
+\ProvideDocumentCommand{\tyfonttable}{m}{%
+\_typoAid_calcAll:n{#1}
+\begin{table}\centering
+\caption{\strut Font~metrics~for~switch:~\cs_to_str:N #1\  }
+\begin{tabular}{lSSS}
+\toprule
+Font~switch&\multicolumn{1}{r}{Alphabet~length}&\multicolumn{1}{r}{Ex~height}&\multicolumn{1}{r}{Em~width}\\
+\midrule
+\texttt{upshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\_typoAid_calcAll:n{\bfseries#1}
+\texttt{bfseries}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\_typoAid_calcAll:n{\itshape#1}
+\texttt{itshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\_typoAid_calcAll:n{\scshape#1}
+\texttt{scshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\_typoAid_calcAll:n{\slshape#1}
+\texttt{slshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\_typoAid_calcAll:n{\sffamily#1}
+\texttt{sffamily}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\bottomrule
+\end{tabular}
+\end{table}
+}
+
+\ProvideDocumentCommand{\tywidthtable}{ s m }{%
+	\_typoAid_calcAll:nn{#2}{\columnwidth}
+	\IfBooleanTF{#1}{%
+		
+	}{%
+		\begin{table}\centering
+			\caption{\strut Width~Data~for~font~modificator~\cs_to_str:N#2\ }
+			\begin{tabular}{lSS}
+			\toprule
+			Description&\multicolumn{1}{c}{Value}&\multicolumn{1}{c}{Char~per~row}\\
+			\midrule
+			Current~column:&\dim_use:N\columnwidth&\int_use:N\l__typoAid_CharPerRow_int\\
+			\bottomrule
+			\end{tabular}
+		\end{table}
+	}
+}
 %%\ExplSyntaxOff
