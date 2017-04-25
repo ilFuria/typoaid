@@ -4,31 +4,39 @@
 %% E-mail: ilfuria+tya@gmail.com
 %% Released under the LaTeX Project Public License v1.3c or later
 %% See http://www.latex-project.org/lppl.txt
+%% Changelog:
+%% 0.0.7 first release
+%% 0.1.0 completed the simple-command interface
+%% 0.1.5 tested and fine tuned the simple command interface
+%% 0.2.0 through 0.2.7 introduced the font table and tuned it
+%% 0.3.0 through 0.3.7 introduced the width table and tuned it
+%% 0.3.8 special code refactoring for luatex
 %% ---------------------------------------------------------------
 
 \RequirePackage{expl3}
-\ProvidesExplPackage{typoaid}{2017/04/25}{0.3.7} {Typographic Aid}
+\ProvidesExplPackage{typoaid}{2017/04/25}{0.3.8} {Typographic Aid}
 \RequirePackage{xparse}
+\RequirePackage{array}
 \RequirePackage{booktabs}
 \RequirePackage{siunitx}
 
 %% CONSTANTS AND VARIABLES
 
-\dim_new:N \l__typoAid_Alphabet_dim
+\dim_new:N \g__typoAid_Alphabet_dim
 
-\dim_new:N\l__typoAid_ExHeight_dim
+\dim_new:N\g__typoAid_ExHeight_dim
 
-\dim_new:N\l__typoAid_EmWidth_dim
+\dim_new:N\g__typoAid_EmWidth_dim
 
-\dim_new:N\l__typoAid_MeanChar_dim
+\dim_new:N\g__typoAid_MeanChar_dim
 
 \box_new:N\g__typoAid_Alphabet_box
 
-\int_new:N\l__typoAid_CharPerRow_int
+\int_new:N\g__typoAid_CharPerRow_int
 
 \dim_new:N\g__typoAid_dummy_dim
 
-\fp_new:N\l__typoAid_alphDivider_fp
+\fp_new:N\g__typoAid_alphDivider_fp
 
 \tl_const:Nn \c__typoAid_lc_alphabet_tl {abcdefghijklmnopqrstuvwxyz}
 
@@ -67,27 +75,27 @@
 \cs_new_protected:Npn\__typoAid_calcAlph:n #1 
 {
 	\__typoAid_typoAlphabet:n{#1}	
-	\dim_gset:Nn\l__typoAid_Alphabet_dim{\box_wd:N\g__typoAid_Alphabet_box}
-	\fp_set:Nn\l__typoAid_alphDivider_fp{26.5+1/100*\dim_to_decimal:n{\l__typoAid_Alphabet_dim}}	\dim_gset:Nn\l__typoAid_MeanChar_dim{\fp_to_dim:n{\dim_to_decimal:n{\l__typoAid_Alphabet_dim}/\fp_use:N\l__typoAid_alphDivider_fp}}
+	\dim_gset:Nn\g__typoAid_Alphabet_dim{\box_wd:N\g__typoAid_Alphabet_box}
+	\fp_set:Nn\g__typoAid_alphDivider_fp{26.5+1/100*\dim_to_decimal:n{\g__typoAid_Alphabet_dim}}	\dim_gset:Nn\g__typoAid_MeanChar_dim{\fp_to_dim:n{\dim_to_decimal:n{\g__typoAid_Alphabet_dim}/\fp_use:N\g__typoAid_alphDivider_fp}}
 }
 
 \cs_new_protected:Npn\__typoAid_calcEx:n #1{%
 	 \__typoAid_smuggle:nn { #1 }
    {
-    \dim_gset:Nn \l__typoAid_ExHeight_dim { \dim_eval:n { 1ex } }
+    \dim_gset:Nn \g__typoAid_ExHeight_dim { \dim_eval:n { 1ex } }
    }
 }
 
 \cs_new_protected:Npn\__typoAid_calcEm:n#1{
 	\__typoAid_smuggle:nn { #1 }
    {
-    \dim_gset:Nn \l__typoAid_EmWidth_dim { \dim_eval:n { 1em } }
+    \dim_gset:Nn \g__typoAid_EmWidth_dim { \dim_eval:n { 1em } }
    }
 }
 
 \cs_new_protected:Npn\__typoAid_calcCharPW:n#1
 {
-\int_gset:Nn\l__typoAid_CharPerRow_int{\int_eval:n{\fp_to_int:n{\dim_ratio:nn{\dim_eval:n{#1}}{\l__typoAid_MeanChar_dim}}}}
+\int_gset:Nn\g__typoAid_CharPerRow_int{\int_eval:n{\fp_to_int:n{\dim_ratio:nn{\dim_eval:n{#1}}{\g__typoAid_MeanChar_dim}}}}
 
 }
 
@@ -117,18 +125,18 @@
 {
 	\__typoAid_calcCharPW:n{\dim_eval:n{\columnwidth}}
 	Current~column~width:~\dim_use:N\columnwidth.~
-	Yields~\int_eval:n{\l__typoAid_CharPerRow_int}~
+	Yields~\int_eval:n{\g__typoAid_CharPerRow_int}~
 	~characters~per~line,~with~the~selected~switch:~\tl_to_str:n{#1} 
 }
 
-\cs_new:Nn\__typoAid_Alphabet_string:{Alphabet~length:~\dim_use:N\l__typoAid_Alphabet_dim}
+\cs_new:Nn\__typoAid_Alphabet_string:{Alphabet~length:~\dim_use:N\g__typoAid_Alphabet_dim}
 
 \cs_new:Nn\__typoAid_ExHeight_string:{%
-	Ex~height:~\dim_use:N\l__typoAid_ExHeight_dim
+	Ex~height:~\dim_use:N\g__typoAid_ExHeight_dim
 }
 
 \cs_new:Nn\__typoAid_EmWidth_string:{%
-	Em~width:~\dim_use:N\l__typoAid_EmWidth_dim
+	Em~width:~\dim_use:N\g__typoAid_EmWidth_dim
 }
 
 \cs_new:Npn\__typoAid_logWidth:nn#1#2
@@ -137,7 +145,7 @@
 					\iow_newline:*~ column:
 					~\dim_to_decimal_in_unit:nn{#1}{1pt}~pt~or~
 					~\dim_to_decimal_in_unit:nn{#1}{1pc}~pc
-					\iow_newline:*~\int_use:N\l__typoAid_CharPerRow_int~%
+					\iow_newline:*~\int_use:N\g__typoAid_CharPerRow_int~%
 					 ~char~per~row%
 }
 
@@ -145,9 +153,9 @@
 {
 	\c__typoAid_name_string.~Font~modifier: \tl_to_str:n{#1}\ ~\iow_newline:*~
 	~Switch:~#2~\iow_newline:*~
-	~Alphabet:~\dim_use:N\l__typoAid_Alphabet_dim\iow_newline:*~
-	~Ex~height:~\dim_use:N\l__typoAid_ExHeight_dim\iow_newline:*~
-	~Em~width:~\dim_use:N\l__typoAid_EmWidth_dim~
+	~Alphabet:~\dim_use:N\g__typoAid_Alphabet_dim\iow_newline:*~
+	~Ex~height:~\dim_use:N\g__typoAid_ExHeight_dim\iow_newline:*~
+	~Em~width:~\dim_use:N\g__typoAid_EmWidth_dim~
 }
 
 %% END LOGS AND STRINGS
@@ -158,7 +166,7 @@
 {
 	\__typoAid_calcAlph:n{#2}
 	\IfBooleanTF{#1}{%
-		\msg_term:n{\l__typoAid_typeout_string\exp_not:N#2~\iow_newline:*~\__typoAid_Alphabet_string:}%
+		\msg_term:n{\c__typoAid_typeout_string\exp_not:N#2~\iow_newline:*~\__typoAid_Alphabet_string:}%
 	}{%
 		 \__typoAid_Alphabet_string:%
 	}%
@@ -185,7 +193,8 @@
 	\__typoAid_log:nn{\__typoAid_EmWidth_string:}{ #2}
 }
 
-\NewDocumentCommand{\typrintall}{ s m}
+
+\NewDocumentCommand{\tyallsimple}{ s m}
 {
   \IfBooleanTF{#1}
   {
@@ -198,17 +207,6 @@
 	\typrintem{#2}\\
 	}
 }
-
-\NewDocumentCommand{\typrintcolumn}{s m}{%
-	\_typoAid_calcAlph:n{#2}
-	\IfBooleanTF{#1}{%
-		\msg_term:n{\c__typoAid_name_string\iow_newline:* ~\__typoAid_column_string:n{#2}}
-	}{%
-		\__typoAid_column_string:n{#2}
-	}
-	\msg_log:n{\c__typoAid_name_string\iow_newline:.~\__typoAid_column_string:n{#2}}
-}
-
 
 \NewDocumentCommand{\tyfonttable}{sm}{%
 \__typoAid_calcAll:n{#2}
@@ -232,27 +230,27 @@
 	\msg_term:n{\__typoAid_logGeneral:nn{#2}{sffamily}}
 		}{%
 	\begin{table}\centering
-	\caption{\strut Font~metrics~for~switch:~\tl_to_str:n{#2}  }
+	\caption{\strut Font~metrics~for~switch:~\tl_to_str:n{#2} }
 	\begin{tabular}{lSSS}
-	\toprule
-	Font~switch&\multicolumn{1}{r}{Alphabet~length}&\multicolumn{1}{r}{Ex~height}&\multicolumn{1}{r}{Em~width}\\
+		\toprule
+		Font~switch &\multicolumn{1}{r}{Alphabet~length}&\multicolumn{1}{r}{Ex~height}&\multicolumn{1}{r}{Em~width}\\
 	\midrule
-\msg_log:n{\__typoAid_logGeneral:nn{#2}{upshape}}	\texttt{upshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\msg_log:n{\__typoAid_logGeneral:nn{#2}{upshape}}	\texttt{upshape}&\dim_use:N\g__typoAid_Alphabet_dim&\dim_use:N\g__typoAid_ExHeight_dim&\dim_use:N\g__typoAid_EmWidth_dim\\
 
 		\__typoAid_calcAll:n{\bfseries#2}
-\msg_log:n{\__typoAid_logGeneral:nn{#2}{bfseries}}	\texttt{bfseries}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\msg_log:n{\__typoAid_logGeneral:nn{#2}{bfseries}}	\texttt{bfseries}&\dim_use:N\g__typoAid_Alphabet_dim&\dim_use:N\g__typoAid_ExHeight_dim&\dim_use:N\g__typoAid_EmWidth_dim\\
 	
 	\__typoAid_calcAll:n{\itshape#2}
-\msg_log:n{\__typoAid_logGeneral:nn{#2}{itshape}}	\texttt{itshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\msg_log:n{\__typoAid_logGeneral:nn{#2}{itshape}}	\texttt{itshape}&\dim_use:N\g__typoAid_Alphabet_dim&\dim_use:N\g__typoAid_ExHeight_dim&\dim_use:N\g__typoAid_EmWidth_dim\\
 	
 	\__typoAid_calcAll:n{\scshape#2}
-\msg_log:n{\__typoAid_logGeneral:nn{#2}{scshape}}	\texttt{scshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\msg_log:n{\__typoAid_logGeneral:nn{#2}{scshape}}	\texttt{scshape}&\dim_use:N\g__typoAid_Alphabet_dim&\dim_use:N\g__typoAid_ExHeight_dim&\dim_use:N\g__typoAid_EmWidth_dim\\
 	
 	\__typoAid_calcAll:n{\slshape#2}
-\msg_log:n{\__typoAid_logGeneral:nn{#2}{slshape}}	\texttt{slshape}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\msg_log:n{\__typoAid_logGeneral:nn{#2}{slshape}}	\texttt{slshape}&\dim_use:N\g__typoAid_Alphabet_dim&\dim_use:N\g__typoAid_ExHeight_dim&\dim_use:N\g__typoAid_EmWidth_dim\\
 
 		\__typoAid_calcAll:n{\sffamily#2}
-\msg_log:n{\__typoAid_logGeneral:nn{#2}{sffamily}}	\texttt{sffamily}&\dim_use:N\l__typoAid_Alphabet_dim&\dim_use:N\l__typoAid_ExHeight_dim&\dim_use:N\l__typoAid_EmWidth_dim\\
+\msg_log:n{\__typoAid_logGeneral:nn{#2}{sffamily}}	\texttt{sffamily}&\dim_use:N\g__typoAid_Alphabet_dim&\dim_use:N\g__typoAid_ExHeight_dim&\dim_use:N\g__typoAid_EmWidth_dim\\
 	\bottomrule
 	\end{tabular}
 	\end{table}
@@ -266,47 +264,47 @@
 		\msg_term:n{\__typoAid_logWidth:nn{\columnwidth}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\columnwidth}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{1.5*\dim_use:N\l__typoAid_Alphabet_dim}}
+		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{1.5*\dim_use:N\g__typoAid_Alphabet_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2*\dim_use:N\l__typoAid_Alphabet_dim}}
+		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2*\dim_use:N\g__typoAid_Alphabet_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 		\msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2.5*\dim_use:N\l__typoAid_Alphabet_dim}}
+			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2.5*\dim_use:N\g__typoAid_Alphabet_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2*\dim_use:N\l__typoAid_EmWidth_dim}}
+		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2*\dim_use:N\g__typoAid_EmWidth_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2.5*\dim_use:N\l__typoAid_EmWidth_dim}}
+		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2.5*\dim_use:N\g__typoAid_EmWidth_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 		\msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{66*\dim_use:N\l__typoAid_MeanChar_dim}}
+		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{66*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{30*\dim_use:N\l__typoAid_MeanChar_dim}}
+		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{30*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{44*\dim_use:N\l__typoAid_MeanChar_dim}}
+\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{44*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 \msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{50*\dim_use:N\l__typoAid_MeanChar_dim}}
+		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{50*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 \msg_term:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
 		\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
@@ -320,53 +318,53 @@
 			Description&\multicolumn{1}{c}{Value(pt)}&\multicolumn{1}{c}{Value(pc)}&\multicolumn{1}{c}{Char~per~row}\\
 			\midrule
 						\msg_log:n{\__typoAid_logWidth:nn{\columnwidth}{#2}}
-			Current~column& \dim_to_decimal_in_unit:nn{\columnwidth}{1pt} & \dim_to_decimal_in_unit:nn{\columnwidth}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			Current~column& \dim_to_decimal_in_unit:nn{\columnwidth}{1pt} & \dim_to_decimal_in_unit:nn{\columnwidth}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 
-			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{1.5*\dim_use:N\l__typoAid_Alphabet_dim}}
+			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{1.5*\dim_use:N\g__typoAid_Alphabet_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			1.5~alphabet~times~(Felici)&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			1.5~alphabet~times~(Felici)&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 
-			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2*\dim_use:N\l__typoAid_Alphabet_dim}}
+			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2*\dim_use:N\g__typoAid_Alphabet_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			2~alphabet~times~(Felici)&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			2~alphabet~times~(Felici)&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 						
-			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2.5*\dim_use:N\l__typoAid_Alphabet_dim}}
+			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2.5*\dim_use:N\g__typoAid_Alphabet_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			2.5~alphabet~times &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			2.5~alphabet~times &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 			
-			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2*\dim_use:N\l__typoAid_EmWidth_dim}}
+			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2*\dim_use:N\g__typoAid_EmWidth_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			2~em~in~pica~(Felici) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			2~em~in~pica~(Felici) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 								
-			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2.5*\dim_use:N\l__typoAid_EmWidth_dim}}
+			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2.5*\dim_use:N\g__typoAid_EmWidth_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 				\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			2.5~em~in~pica~(Felici/Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			2.5~em~in~pica~(Felici/Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 		
-			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{66*\dim_use:N\l__typoAid_MeanChar_dim}}
+			\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{66*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			66~char~per~row~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			66~char~per~row~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 			
-\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{30*\dim_use:N\l__typoAid_MeanChar_dim}}
+\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{30*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			30~char~per~row~multicol~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			30~char~per~row~multicol~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 			
-\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{44*\dim_use:N\l__typoAid_MeanChar_dim}}
+\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{44*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 						\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			44~char~per~row~multicol~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			44~char~per~row~multicol~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 
 			
-\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{50*\dim_use:N\l__typoAid_MeanChar_dim}}
+\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{50*\dim_use:N\g__typoAid_MeanChar_dim}}
 			\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
 			\msg_log:n{\__typoAid_logWidth:nn{\g__typoAid_dummy_dim}{#2}}
-			50~char~per~row~multicol~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\l__typoAid_CharPerRow_int\\
+			50~char~per~row~multicol~(Bringhurst) &\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pt}&\dim_to_decimal_in_unit:nn{\g__typoAid_dummy_dim}{1pc}&\int_use:N\g__typoAid_CharPerRow_int\\
 			
 \bottomrule
 			
@@ -377,22 +375,32 @@
 
 \NewDocumentCommand{\tychperwidth}{som}{%
 	\__typoAid_calcAll:n{#3}
-	\IfNoValueTF{#2}{\dim_gset:Nn\g__typoAid_dummy_dim{\columnwidth}}{\dim_gset:Nn\g__typoAid_dummy_dim{#2}}
-	\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-	\IfBooleanTF{#1}{%
-	\msg_term:n{\c__typoAid_name_string;~Calculated:~\int_eval:n{\l__typoAid_CharPerRow_int}~chars~in~width:~
-	\dim_use:N\g__typoAid_dummy_dim~~ and~switch~\tl_to_str:n{#3}\ }
-	}{
-	Calculated:~\int_eval:n{\l__typoAid_CharPerRow_int}~chars~in~width:~
-	\dim_eval:n{\g__typoAid_dummy_dim}~and~switch~\tl_to_str:n{#3}\
+	\IfNoValueTF{#2}
+	{
+		\dim_gset:Nn\g__typoAid_dummy_dim{\columnwidth}
 	}
-	\msg_log:n{\c__typoAid_name_string;~Calculated:~\int_eval:n{\l__typoAid_CharPerRow_int}~chars~in~width:~
-	\dim_eval:n{\g__typoAid_dummy_dim}~and~switch~\tl_to_str:n{#3}\ }
+	{
+		\dim_gset:Nn\g__typoAid_dummy_dim{#2}
+	}
+	
+	\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
+	
+	\IfBooleanTF{#1}
+	{
+		\msg_term:n{\c__typoAid_name_string;~Calculated:~\int_eval:n{\g__typoAid_CharPerRow_int}~chars~in~width:~
+		\dim_use:N\g__typoAid_dummy_dim~~ and~switch~\tl_to_str:n{#3}}
+	}{
+		Calculated:~\int_eval:n{\g__typoAid_CharPerRow_int}~chars~in~width:~
+		\dim_eval:n{\g__typoAid_dummy_dim}~and~switch~\tl_to_str:n{#3}
+	}
+	
+	\msg_log:n{\c__typoAid_name_string;~Calculated:~\int_eval:n{\g__typoAid_CharPerRow_int}~chars~in~width:~
+	\dim_eval:n{\g__typoAid_dummy_dim}~and~switch~\tl_to_str:n{#3}}
 }
 
 \NewDocumentCommand{\tywidthgivchar}{sO{}m}{%
 	\__typoAid_calcAll:n{#2}
-	\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{\dim_to_fp:n{\l__typoAid_MeanChar_dim}*\int_eval:n{#3}}}
+	\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{\dim_to_fp:n{\g__typoAid_MeanChar_dim}*\int_eval:n{#3}}}
 	\IfBooleanTF{#1}{%
 	\msg_term:n{\c__typoAid_name_string;~for:\tl_to_str:n{#2}\ %
 	\iow_newline:*~for~\int_eval:n{#3}~char,\iow_newline:*~ %
