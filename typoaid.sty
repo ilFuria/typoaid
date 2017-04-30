@@ -235,15 +235,13 @@
 		}
 }
 
-%% Saves a row for the width table 
-%% Params
-%% 1 -> multiplier
-%% 2 -> dimension
-%% 3 -> font switch
-%% 4 -> first row text
-\cs_new:Npn\__typoAid_prepareWidthTableRow:nnnn#1#2#3#4
+%% Calculates the data for the typeseting of the width table
+%% Parameters
+%% 1-> multiplier
+%% 2-> dimension
+\cs_new:Npn\__typoAid_CalculateWidthTableData:nn#1#2
 {
-
+	
 	% Saves the local value of the desired dimension
 	\dim_gset:Nn\g__typoAid_dummy_dim
 		{
@@ -254,6 +252,18 @@
 		}
 	% Calculates the char fitting in the dimension
 	\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
+}
+
+%% Saves a row for the width table 
+%% Params
+%% 1 -> multiplier
+%% 2 -> dimension
+%% 3 -> font switch
+%% 4 -> first row text
+\cs_new:Npn\__typoAid_prepareWidthTableRow:nnnn#1#2#3#4
+{
+	
+	\__typoAid_CalculateWidthTableData:nn{#1}{#2}
 	
 	% logs
 	\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#3}}
@@ -269,6 +279,19 @@
 	}
 }
 
+%% Prepares the log and terminal for starred table version
+%% PArams
+%% 1-> multiplier
+%% 2-> dimension
+%% 3 -> switch
+\cs_new:Npn\__typoAid_WidthTableLog:nnn#1#2#3
+{
+	% Performs the calculation
+	\__typoAid_CalculateWidthTableData:nn{#1}{#2}
+	
+	\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#3}}
+	\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#3}}
+}
 %% END LOGS AND STRINGS
 
 %% PUBLIC INTERFACE
@@ -450,51 +473,16 @@
 		\msg_term:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
 		\msg_log:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
 		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{1.5*\dim_use:N\g__typoAid_Alphabet_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2*\dim_use:N\g__typoAid_Alphabet_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{2.5*\dim_use:N\g__typoAid_Alphabet_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2*\dim_use:N\g__typoAid_EmWidth_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{12*2.5*\dim_use:N\g__typoAid_EmWidth_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{66*\dim_use:N\g__typoAid_MeanChar_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{30*\dim_use:N\g__typoAid_MeanChar_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{44*\dim_use:N\g__typoAid_MeanChar_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
-		\dim_gset:Nn\g__typoAid_dummy_dim{\fp_to_dim:n{50*\dim_use:N\g__typoAid_MeanChar_dim}}
-		\__typoAid_calcCharPW:n{\g__typoAid_dummy_dim}
-		\msg_term:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\g__typoAid_dummy_dim}{#2}}
-		
+
+		\__typoAid_WidthTableLog:nnn{1.5}{\g__typoAid_Alphabet_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{2}{\g__typoAid_Alphabet_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{2.5}{\g__typoAid_Alphabet_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{24}{\g__typoAid_EmWidth_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{30}{\g__typoAid_EmWidth_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{66}{\g__typoAid_MeanChar_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{30}{\g__typoAid_MeanChar_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{44}{\g__typoAid_MeanChar_dim}{#2}
+		\__typoAid_WidthTableLog:nnn{50}{\g__typoAid_MeanChar_dim}{#2}
 	}{
 		\begin{table}\centering
 			\caption{\strut Width~data~for~font~modificator~\tl_to_str:n{#2} }
