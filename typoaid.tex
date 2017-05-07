@@ -1,16 +1,19 @@
 \documentclass{article}
+\usepackage[marginparwidth=80pt]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
+\usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{metalogo}
 \usepackage[makeindex]{imakeidx}
 \usepackage{microtype}
 \usepackage{varioref}
 \usepackage{hyperref}
+\usepackage{typoaid}
 \usepackage{url}
 \author{Daniele Ratti}
 \makeindex[intoc]
-\title{The Typo Aid Package (v.0.3.8)}
+\title{The Typo Aid Package (v.0.4.7)}
 \makeatletter
 \let\@@oldmpar\marginpar
 \renewcommand{\marginpar}[1]{\@@oldmpar{\small#1}}
@@ -19,7 +22,7 @@
 \maketitle
 
 \begin{abstract}
-The typo aid package provides some useful tools in order to provide data regarding the used fonts, and some hints about typesetting them. This manual is divided in two parts, the first mainly concerned with the end-user commands and usage, the second is a collection of notes regarding future development and code
+The typoaid package provides some useful tools in order to provide data regarding the used fonts, and some hints about typesetting them. This manual is divided in two parts, the first mainly concerned with the end-user commands and usage, the second is a collection of notes regarding future development and code
 \end{abstract}
 \tableofcontents
 \part{User manual}
@@ -88,6 +91,45 @@ will output in terminal (starred version) and log the width to typeset 68 charac
 \tywidthgivchar[\bfseries]{35}
 \end{verbatim}
 Will instead output -- in the page and the log -- the width of the column that will accommodate 35 characters of the bold version of the current font.
+
+\section{Height commands}
+To determine the height of a given text, usually \cite{bib:bringhurst} one can determine a \emph{form factor} to which its text will comply, and then will tweak it in order to accommodate an \emph{integer number of lines.}
+
+The  \marginpar{\texttt{\textbackslash tyheight}} \verb!\tyheight!\index{\textbackslash tyheight} command gives an hint to the user, outputting the number of lines. The command comes with the two usual \texttt{typoaid} starred scheme, but its parameters are a bit more complex since:
+\begin{itemize}
+\item it accepts a first optional parameter (in square brackets) which indicates a font switch
+\item it accepts two ``mandatory’’  (i.e. curly braces-delimited) arguments, indicating resp:
+\begin{enumerate}
+\item the height to be used (if no parameter is given, the current value of  \texttt{textheight} is used)
+\item the baseline skip to be used (if no parameter is given, the current  value of \texttt{baselineskip} is used
+\end{enumerate}
+\item accepts also a trailing optional parameter (square brackets) which has the optional 
+\end{itemize}
+
+\paragraph{Examples} 
+The command syntax may appear complex, but it’s actually modeled around what I think it would be its more common usage. Anyway here are some examples:
+\begin{verbatim}
+\tyheight{}{}
+\end{verbatim}
+gives the height and number of lines for current data.
+
+\begin{verbatim}
+\tyheight{538pt}{13pt}
+\end{verbatim}
+gives the number of rows in $538$pt using a $13$pt baselineskip.
+
+\begin{verbatim}
+\tyheight[\bfseries]{}{13pt}
+\end{verbatim}
+will output the number of lines in \texttt{bfseries} with $13$ pt baselineskip and current height
+
+\begin{verbatim}
+\tyheight[\itshape]{540pt}{13.6pt}[11pt]
+\end{verbatim}
+will add the condition of the $11$ pt size. Of course one can use other values and data.
+
+\subparagraph{Note:} The other width command currently included are tabular ones, thus given in section~\vref{heighttables}.
+
 \section{Tabular data}
 The package provides two diagnostic commands, which will output tables when used in the unstarred version -- they will output a list of things in the terminal for the starred version; and also for the log in any ``version’’.
 \subsection{Font tables}
@@ -120,6 +162,29 @@ There are a few remarks:
 \item \emph{multicol} means that a setting is most suited for multiple columns 
 \item the number of characters for width is the result of a rounding (as most quantities here reported are) so all of the numbers are to be taken as approximates.
 \end{itemize}
+
+\subsection{Height tables}\label{heighttables}
+The \marginpar{\textbackslash tyformfactorheight} \verb|\tyformfactorheight|\index{\textbackslash tyformfactorheight} is the main \emph{vertical} command and is used to have a guideline on how tall the text should be. 
+
+In common practice (at least the author’s), the design tends to have a specific \emph{form factor,} i.e., a given ratio between text height and width. This will have to be matched with the need to have an integer number of lines in the text height. 
+
+The command, then, will come in two flavours (starred and unstarred) and will always accept the following parameters, given in order:
+\begin{itemize}
+\item an optional font family switch (in square brackets)
+\item a mandatory dimension for the text height, in curly braces; if not given the package will assume \texttt{columnwidth}
+\item a mandatory \emph{form factor} parameter which \emph{cannot be empty}
+\item an optional square bracketed parameter, to specify the baseline skip to be used, defaulting to the current one.
+\end{itemize}
+
+Upon executing, the command will output (either in the page or the terminal, plus log) three rows containing the height, the number of lines and the form factor; these will be:
+\begin{enumerate}
+\item the \emph{strict} result obtained multiplying the width by the form factor. Could result in non-integer number of lines per height
+\item the \emph{truncated number of lines} resulted from the previous calculation, with the updated form factor and height.
+\item the \emph{up rounded number of lines} resulted from the first calculation, with the updated form factor and height
+\end{enumerate}
+
+This way the user can specify some form-factor guidelines, and see which form factors are the nearest which accommodate an integer number of lines.
+
 \part{Notes, details, licensing}
 \section{Calculations}\label{calc}
 The calculations performed by this package are only indicative. The calculations are based on two concepts:
@@ -132,23 +197,14 @@ Regarding the mean char width, I don’t know whether the calculation are correc
 \section{Known issues}
 The code works hopefully, and should do fine. Despite that it needs to be worked on, both from the functionality and code prettyness. I will go on and work on these issues. Please mark that I already know them, so don’t be scared by the code
 
-\paragraph{Some dirty tricks} The code has many issues, it seems a garbled mass of somewhat working stuff, but I know there’s space to improve it, starting, for example, by making internal utility functions.
-
-\paragraph{Let’s go global} Also I struggled a bit with the sense of \emph{local} and \emph{global} in \texttt{expl3} language. The code has all the variables set to be global. This is highly undesirable and an urgent step will be to refactor these in order to make them global only if needed.
-
-\paragraph{Command instantiation} The creation of the functions is somewhat suspicious and I need to reinspect that.
-
-\paragraph{Outputs} The way that the output is generated (mainly for the terminal and log) is somewhat dissatisfying. I need to rework that in order to make it more generic.
+\paragraph{Let’s go global} Also I struggled a bit with the sense of \emph{local} and \emph{global} in \texttt{expl3} language. The code has all the variables set to be global. This is highly undesirable and an urgent step will be to refactor these in order to make them global only if needed. Unfortunately the problem became more and more apparent from v.0.4.0, but I’m not capable of doing it any other way
 
 \paragraph{Required packages} I don’t like depending upon too many packages. Currently I depend on table typesetting packages such as \texttt{array, booktabs}. Since the package could possibly be used without any typeset output, I will consider to introduce a package-wide option to enable the aforementioned packages and functionalities.
 
-\paragraph{No comment} Yes, the code is uncommented, for the most part. I will get onto that too.
 
 \section{Future implementations and roadmap}
 As seen in the previous section, the package is far from complete. I set up a little roadmap:
 \begin{enumerate}
-\item Reworking the code and make it good 
-\item Adding vertical commands (i.e. to calculate textheight)
 \item Rework and make good outputs in log and terminal
 \item Introduce Lua\TeX{} specific commands and functionalities 
 \end{enumerate}
@@ -160,8 +216,9 @@ This is a stub and will be until version 1.0 will be released, since the package
 \item[v0.2.0] Introduced the \emph{fonts table}
 \item[v0.3.0] Introduced the \emph{width table}
 \item[v0.3.8] Fixed various issues, second release
+\item[v0.4.7] Fixed and prettied all the code, introduced vertical commands
 \end{description}
-\section{Acknowledgements}
+\section{Acknowledgments}
 Special thanks to Enrico Gregorio, which, apart from helping me -- especially for the Lua\TeX{} safe no-kerning code -- also tried to teach me \texttt{expl3} and some of its nuisances. I’m a bit ashamed to be such an awful student.
 I would also like to thank very much: \TeX nician, Joseph Wright, David Carlisle and Barbara Beeton for their support and kind remarks. 
 \textbf{Please mark that none of the people mentioned above have any idea on how I chose to implement (and typeset) the code inside the package, but they nevertheless provided many useful tips and tools for me to develop this. They cannot be blamed for anything that can be wrong in this package.}

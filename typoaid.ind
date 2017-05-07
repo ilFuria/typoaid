@@ -1,0 +1,23 @@
+\begin{theindex}
+
+  \item \textbackslash tyallsimple, \hyperpage{3}
+  \item \textbackslash tychperwidth, \hyperpage{3}
+  \item \textbackslash tyfonttable, \hyperpage{5}
+  \item \textbackslash tyformfactorheight, \hyperpage{6}
+  \item \textbackslash tyheight, \hyperpage{4}
+  \item \textbackslash typrintalph, \hyperpage{2}
+  \item \textbackslash typrintem, \hyperpage{2}
+  \item \textbackslash typrintex, \hyperpage{2}
+  \item \textbackslash tywidthgivchar, \hyperpage{4}
+  \item \textbackslash tywidthtable, \hyperpage{5}
+
+  \indexspace
+
+  \item Alphabet, \hyperpage{2}
+
+  \indexspace
+
+  \item Em-width, \hyperpage{2}
+  \item Ex-height, \hyperpage{2}
+
+\end{theindex}
