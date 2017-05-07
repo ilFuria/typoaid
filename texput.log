@@ -1,0 +1,10 @@
+This is LuaTeX, Version 0.95.0 (TeX Live 2016)  (format=luatex 2017.4.8)  2 MAY 2017 22:32
+ restricted system commands enabled.
+**print("Hello World")
+
+! Emergency stop.
+<*> print("Hello World")
+                     
+End of file on the terminal!
+
+!  ==> Fatal error occurred, no output PDF file produced!

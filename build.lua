@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
--- Build script for typoaid
+--  Build script for typoaid
 
 module="typoaid"
 
