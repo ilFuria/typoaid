@@ -1,0 +1,29 @@
+\select@language {english}
+\contentsline {part}{I\hspace {1em}User manual}{2}{part.1}
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Compatibility}{2}{subsection.1.1}
+\contentsline {section}{\numberline {2}Simple commands}{2}{section.2}
+\contentsline {section}{\numberline {3}Char per width commands}{3}{section.3}
+\contentsline {subsection}{\numberline {3.1}Characters fitting a given width}{3}{subsection.3.1}
+\contentsline {subparagraph}{Note:}{3}{section*.2}
+\contentsline {paragraph}{Examples}{3}{section*.3}
+\contentsline {subsection}{\numberline {3.2}Width for a given number of characters}{4}{subsection.3.2}
+\contentsline {paragraph}{Examples}{4}{section*.4}
+\contentsline {section}{\numberline {4}Height commands}{4}{section.4}
+\contentsline {paragraph}{Examples}{4}{section*.5}
+\contentsline {subparagraph}{Note:}{5}{section*.6}
+\contentsline {section}{\numberline {5}Tabular data}{5}{section.5}
+\contentsline {subsection}{\numberline {5.1}Font tables}{5}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Width tables}{5}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}Height tables}{6}{subsection.5.3}
+\contentsline {part}{II\hspace {1em}Notes, details, licensing}{6}{part.2}
+\contentsline {section}{\numberline {6}Calculations}{7}{section.6}
+\contentsline {section}{\numberline {7}Known issues}{7}{section.7}
+\contentsline {paragraph}{Let\IeC {\textquoteright }s go global}{7}{section*.7}
+\contentsline {paragraph}{Required packages}{7}{section*.8}
+\contentsline {section}{\numberline {8}Future implementations and roadmap}{7}{section.8}
+\contentsline {section}{\numberline {9}Changelog}{8}{section.9}
+\contentsline {section}{\numberline {10}Acknowledgments}{8}{section.10}
+\contentsline {section}{\numberline {11}License and contacts}{8}{section.11}
+\contentsline {section}{Bibliography}{8}{section*.9}
+\contentsline {section}{Index}{9}{section*.10}
