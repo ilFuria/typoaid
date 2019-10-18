@@ -181,7 +181,7 @@
 	% sets the local variables
 	\dim_set:Nn\l_tmpa_dim{\dim_eval:n{#2}}
 	\dim_set:Nn\l_tmpb_dim{\dim_eval:n{#3}}
-	\msg_term:n{\dim_eval:n{#2}~\dim_eval:n{#3}}
+	\iow_term:n{\dim_eval:n{#2}~\dim_eval:n{#3}}
 	% subtracts the curent font size from the height
 	\dim_sub:Nn\l_tmpb_dim{\dim_use:N\g__typoAid_SwitchedFontSize_dim}
 
@@ -222,7 +222,7 @@
 %% A function that logs a specific string, with "Typoaid as a header"
 \cs_new:Npn\__typoAid_log:nn #1#2
 {
-	\msg_log:n{\c__typoAid_typeout_string~#2 \\ #1}
+	\iow_log:n{\c__typoAid_typeout_string~#2 \\ #1}
 }
 
 %% New function that typesets the  char per width
@@ -285,7 +285,7 @@
 	\__typoAid_calcAll:n{#1#2}
 	
 	%log
-	\msg_log:n{\__typoAid_logFontshapeData:nn{#1}{#2}}
+	\iow_log:n{\__typoAid_logFontshapeData:nn{#1}{#2}}
 	
 	%saves the row
 	\tl_gset:Nn\g_tmpa_tl
@@ -328,7 +328,7 @@
 	\__typoAid_CalculateWidthTableData:nn{#1}{#2}
 	
 	% logs
-	\msg_log:n{\__typoAid_logWidthData:nn{\g_tmpa_dim}{#3}}
+	\iow_log:n{\__typoAid_logWidthData:nn{\g_tmpa_dim}{#3}}
 	%clears and sets the token list
 	\tl_gclear:N\g_tmpa_tl
 
@@ -370,8 +370,8 @@
 	% Performs the calculation
 	\__typoAid_CalculateWidthTableData:nn{#1}{#2}
 	
-	\msg_term:n{\__typoAid_logWidthData:nn{\g_tmpa_dim}{#3}}
-	\msg_log:n{\__typoAid_logWidthData:nn{\g_tmpa_dim}{#3}}
+	\iow_term:n{\__typoAid_logWidthData:nn{\g_tmpa_dim}{#3}}
+	\iow_log:n{\__typoAid_logWidthData:nn{\g_tmpa_dim}{#3}}
 }
 
 %% Logs the data for the form factor table
@@ -382,7 +382,7 @@
 %% 4 ->rows p height
 \cs_new:Nn\__typoAid_formfactor_log:nnnn
 {
-	\msg_log:n
+	\iow_log:n
 	{
 		\c__typoAid_name_string\iow_newline:.~
 		Form~factor: \fp_eval:n{#3}~for~switch:\tl_to_str:n{#2}\iow_newline:.~
@@ -405,7 +405,7 @@
 	% Determines whether it has to output to the term or page
 	\IfBooleanTF{#1}
 	{
-		\msg_term:n
+		\iow_term:n
 		{
 			\c__typoAid_typeout_string \tl_to_str:n{#2}\\ 
 			\__typoAid_Alphabet_string:
@@ -427,7 +427,7 @@
 	% decides term vs page
 	\IfBooleanTF{#1}
 	{
-		\msg_term:n
+		\iow_term:n
 		{
 			\c__typoAid_typeout_string \tl_to_str:n{#2}\\ 
 			\__typoAid_ExHeight_string:
@@ -449,7 +449,7 @@
 	% Selects the main output
 	\IfBooleanTF{#1}
 	{
-		\msg_term:n
+		\iow_term:n
 		{
 			\c__typoAid_typeout_string\tl_to_str:n{#2}\\
 			\__typoAid_EmWidth_string:
@@ -489,38 +489,38 @@
 		\__typoAid_calcAll:n{#2}
 	
 		%output
-		\msg_log:n{\__typoAid_logFontshapeData:nn{#2}{upshape}}
-		\msg_term:n{\__typoAid_logFontshapeData:nn{#2}{upshape}}
+		\iow_log:n{\__typoAid_logFontshapeData:nn{#2}{upshape}}
+		\iow_term:n{\__typoAid_logFontshapeData:nn{#2}{upshape}}
 
 		% redo the calculation for bfseries
 		\__typoAid_calcAll:n{\bfseries#2}
 		%output
-		\msg_log:n{\__typoAid_logFontshapeData:nn{#2}{bfseries}}
-		\msg_term:n{\__typoAid_logFontshapeData:nn{#2}{bfseries}}
+		\iow_log:n{\__typoAid_logFontshapeData:nn{#2}{bfseries}}
+		\iow_term:n{\__typoAid_logFontshapeData:nn{#2}{bfseries}}
 	
 		% redo the calculation for itshape
 		\__typoAid_calcAll:n{\itshape#2}
 		%output
-		\msg_log:n{\__typoAid_logFontshapeData:nn{#2}{itshape}}
-		\msg_term:n{\__typoAid_logFontshapeData:nn{#2}{itshape}}
+		\iow_log:n{\__typoAid_logFontshapeData:nn{#2}{itshape}}
+		\iow_term:n{\__typoAid_logFontshapeData:nn{#2}{itshape}}
 	
 		% redo the calculation for small caps
 		\__typoAid_calcAll:n{\scshape#2}
 		%output
-		\msg_log:n{\__typoAid_logFontshapeData:nn{#2}{scshape}}
-		\msg_term:n{\__typoAid_logFontshapeData:nn{#2}{scshape}}
+		\iow_log:n{\__typoAid_logFontshapeData:nn{#2}{scshape}}
+		\iow_term:n{\__typoAid_logFontshapeData:nn{#2}{scshape}}
 
 		% redo the calculation for slanted
 		\__typoAid_calcAll:n{\slshape#2}
 		%output
-		\msg_log:n{\__typoAid_logFontshapeData:nn{#2}{slshape}}
-		\msg_term:n{\__typoAid_logFontshapeData:nn{#2}{slshape}}
+		\iow_log:n{\__typoAid_logFontshapeData:nn{#2}{slshape}}
+		\iow_term:n{\__typoAid_logFontshapeData:nn{#2}{slshape}}
 		
 		% redo the calculation for sans serif
 		\__typoAid_calcAll:n{\sffamily#2}
 		%output
-		\msg_log:n{\__typoAid_logFontshapeData:nn{#2}{sffamily}}
-		\msg_term:n{\__typoAid_logFontshapeData:nn{#2}{sffamily}}
+		\iow_log:n{\__typoAid_logFontshapeData:nn{#2}{sffamily}}
+		\iow_term:n{\__typoAid_logFontshapeData:nn{#2}{sffamily}}
 	}{
 	% creates a table, centered
 	\begin{table}\centering
@@ -570,8 +570,8 @@
 	\IfBooleanTF{#1}
 	{
 
-		\msg_term:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
-		\msg_log:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
+		\iow_term:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
+		\iow_log:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
 		
 
 		\__typoAid_WidthTableLog:nnn{1.5}{\g__typoAid_Alphabet_dim}{#2}
@@ -593,7 +593,7 @@
 				\multicolumn{1}{c}{Value(pc)}&
 				\multicolumn{1}{c}{Char~per~row}\\
 				\midrule
-				\msg_log:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
+				\iow_log:n{\__typoAid_logWidthData:nn{\columnwidth}{#2}}
 				
 				Current~column&
 				\dim_to_decimal_in_unit:nn{\columnwidth}{1pt} &
@@ -696,7 +696,7 @@
 	%% determines the output
 	\IfBooleanTF{#1}
 	{
-		\msg_term:n
+		\iow_term:n
 		{
 			\c__typoAid_name_string;~Calculated:~\int_eval:n{\g__typoAid_CharPerRow_int}~chars~in~width:~
 			\dim_use:N\l_tmpa_dim~~ and~switch~\tl_to_str:n{#3}
@@ -706,7 +706,7 @@
 		\dim_eval:n{\l_tmpa_dim}~and~switch~\tl_to_str:n{#3}
 	}
 	
-	\msg_log:n
+	\iow_log:n
 	{
 		\c__typoAid_name_string;~Calculated:~\int_eval:n{\g__typoAid_CharPerRow_int}~chars~in~width:~
 		\dim_eval:n{\l_tmpa_dim}~and~switch~\tl_to_str:n{#3}
@@ -733,7 +733,7 @@
 	%Determines the output
 	\IfBooleanTF{#1}
 	{
-		\msg_term:n{\c__typoAid_name_string;~for:\tl_to_str:n{#2}
+		\iow_term:n{\c__typoAid_name_string;~for:\tl_to_str:n{#2}
 		\iow_newline:*~for~\int_eval:n{#3}~char,\iow_newline:*~ %
 		colwidth:~\dim_eval:n{\l_tmpa_dim}~(\dim_to_decimal_in_unit:nn{\l_tmpa_dim}{1pc}~pc)}
 	}{
@@ -742,7 +742,7 @@
 		\dim_eval:n{\l_tmpa_dim}~(\dim_to_decimal_in_unit:nn{\l_tmpa_dim}{1pc}~pc)
 	}
 	%log
-	\msg_log:n{\c__typoAid_name_string;~for:\tl_to_str:n{#2}\ 
+	\iow_log:n{\c__typoAid_name_string;~for:\tl_to_str:n{#2}\ 
 	\iow_newline:.~for \int_eval:n{#3}~char,\iow_newline:.~
 	colwidth:~\dim_eval:n{\l_tmpa_dim}~(\dim_to_decimal_in_unit:nn{\l_tmpa_dim}{1pc}~pc)}
 }
@@ -788,7 +788,7 @@
  	
  	\IfBooleanTF{#1}
  	{
-		\msg_term:n{\c__typoAid_name_string;\iow_newline:*~The~height~of~\dim_eval:n{
+		\iow_term:n{\c__typoAid_name_string;\iow_newline:*~The~height~of~\dim_eval:n{
  			\tl_if_blank:nTF{#3}{\dim_use:N\textheight}{\dim_eval:n{#3}}}
  		~could~contain~\fp_eval:n{\l_tmpa_fp}~lines~of~text~with~switch~\tl_to_str:n{#2}}
  	}{
@@ -798,7 +798,7 @@
  		}~could~contain~\fp_eval:n{\l_tmpa_fp}~lines~of~text~with~switch~\tl_to_str:n{#2}
  	}
  	
- 	\msg_log:n{\c__typoAid_name_string;\iow_newline:*~The~height~of~\dim_eval:n
+ 	\iow_log:n{\c__typoAid_name_string;\iow_newline:*~The~height~of~\dim_eval:n
  		{
  			\tl_if_blank:nTF{#3}{\dim_use:N\textheight}{\dim_eval:n{#3}}
  		}~could~contain~\fp_eval:n{\l_tmpa_fp}~lines~of~text~with~switch~\tl_to_str:n{#2}}
@@ -837,7 +837,7 @@
 				
 		\__typoAid_nrRows:nnn{#2}{\l__typoAid_local_dim}{\g_tmpb_dim}
 				
-		\msg_term:n
+		\iow_term:n
 		{
 			\c__typoAid_name_string\iow_newline:*~
 			Form~factor: \fp_eval:n{#4}~for~switch:\tl_to_str:n{#2}\iow_newline:*~
@@ -857,7 +857,7 @@
 				
 		\__typoAid_HeightForRows:nnn{#1}{\g_tmpa_int}{\l__typoAid_local_dim}
 		
-		\msg_term:n
+		\iow_term:n
 		{
 			\c__typoAid_name_string\iow_newline:*~
 			Form~factor: \fp_eval:n{round(\dim_ratio:nn{\g_tmpa_dim}{\l_tmpa_dim},3) }~
@@ -880,7 +880,7 @@
 				
 		\__typoAid_HeightForRows:nnn{#1}{\g_tmpa_int}{\l__typoAid_local_dim}
 		
-		\msg_term:n
+		\iow_term:n
 		{
 			\c__typoAid_name_string\iow_newline:*~
 			Form~factor: \fp_eval:n{round(\dim_ratio:nn{\g_tmpa_dim}{\l_tmpa_dim},3) }~
